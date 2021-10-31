@@ -18,6 +18,8 @@ const EGG_TOTAL_SUPPLY = "2000000" + DECIMALS;
 const BURNING_BURN_LIMIT = "200000" + DECIMALS;
 const BURNING_SINGLE_BURN_AMOUNT = "50000" + DECIMALS;
 
+const NEW_OWNER = "0x9cdd3da8aeb62804bea3545a0b1a390073348993";
+
 module.exports = async (deployer, networks, accounts) => {
   await deployer.deploy(EggToken, EGG_TOKEN_NAME, EGG_TOKEN_SYMBOL, EGG_TOTAL_SUPPLY);
   const EggTokenInstance = await EggToken.deployed();
@@ -71,13 +73,14 @@ module.exports = async (deployer, networks, accounts) => {
   // Testnet Owner Account (for all contracts): 0x9cdd3da8aeb62804bea3545a0b1a390073348993
   let contracts_deriving_ownable = [WithdrawableDistributionInstance, VotingInstance, StakingInstance]
   await Promise.all(
-    contracts_deriving_ownable.map( async instance => await instance.transferOwnership('0x9cdd3da8aeb62804bea3545a0b1a390073348993') )
+    contracts_deriving_ownable.map( async instance => await instance.transferOwnership(NEW_OWNER) )
   )
+  await EggTokenInstance.transfer(NEW_OWNER, await EggTokenInstance.balanceOf(accounts[0]))
+  // transfer the remaining balance of deployer to the new owner
 };
 
-/*
 
+/*
 truffle compile --all
 truffle migrate --network ftm_testnet
-
 */
