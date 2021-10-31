@@ -5,3 +5,4 @@
 /truffle/private-key-mainnet.txt
 /truffle/private-key-testnet.txt
 /truffle/etherscan-api-key.txt
+/truffle/.env

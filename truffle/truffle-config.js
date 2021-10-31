@@ -1,82 +1,63 @@
-const HDWalletProvider = require("truffle-hdwallet-provider");
 
-const fs = require("fs");
-const infuraApiKey = fs.readFileSync("infura-api-key.txt").toString().trim();
-const etherscanApiKey = fs.readFileSync("etherscan-api-key.txt").toString().trim();
-const testnetPrivateKey = fs.readFileSync("private-key-testnet.txt").toString().trim();
-const mainnetPrivateKey = fs.readFileSync("private-key-mainnet.txt").toString().trim();
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+require('dotenv').config()
+
+const mnemonic = process.env.MNEMONIC
+const url = process.env.RPC_URL
+// https://rinkeby.infura.io/v3/<PROJECT-ID> // for interacting with rinkeby chain
 
 module.exports = {
-  plugins: ["truffle-plugin-verify"],
-
-  api_keys: {
-    etherscan: etherscanApiKey,
-  },
-
+  /**
+   * $ truffle test --network <network-name>
+   */
   networks: {
-    ropsten: {
-      provider: () => {
-        return new HDWalletProvider(
-          testnetPrivateKey,
-          `https://ropsten.infura.io/v3/${infuraApiKey}`,
-          0,
-          6
-        );
-      },
-      network_id: 3,
-      gas: 8000000,
-      gasPrice: 50000000000,
-      confirmations: 3,
-      timeoutBlocks: 500,
-      skipDryRun: true,
+    development: {
+    provider: () => new HDWalletProvider(mnemonic, 'http://127.0.0.1:8545'),
+     host: "127.0.0.1",     // Localhost (default: none)
+     port: 8545,            // Standard Ethereum port (default: none)
+     network_id: "*",       // Any network (default: none)
+    }, // start ganache-cli before this and set env MNEMONIC
+    bsc_testnet: {
+      provider: () => new HDWalletProvider(mnemonic,'https://data-seed-prebsc-1-s1.binance.org:8545'),
+      network_id: 97,
+      confirmations: 5,
+      timeoutBlocks: 200,
+      skipDryRun: true
     },
     rinkeby: {
       provider: () => {
-        return new HDWalletProvider(
-          testnetPrivateKey,
-          `https://rinkeby.infura.io/v3/${infuraApiKey}`,
-          0,
-          6
-        );
+        return new HDWalletProvider(mnemonic, url)
       },
-      network_id: 4,
-      gas: 10000000,
-      gasPrice: 3000000000,
-      confirmations: 3,
-      timeoutBlocks: 500,
-      skipDryRun: true,
+      network_id: '4',
+      skipDryRun: true
     },
-
-    mainnet: {
-      provider: () => {
-        return new HDWalletProvider(
-          mainnetPrivateKey,
-          `https://mainnet.infura.io/v3/${infuraApiKey}`
-        );
-      },
-      network_id: 1,
-      gas: 10000000,
-      gasPrice: 30000000000,
-      confirmations: 3,
-      timeoutBlocks: 10000,
-      skipDryRun: true,
+    ftm_testnet: {
+      provider: () => new HDWalletProvider(mnemonic,'https://rpc.testnet.fantom.network/'),
+      network_id: 4002, // as seen in error message
+      confirmations: 5,
+      timeoutBlocks: 200,
+      skipDryRun: true
     },
   },
 
+  // Set default mocha options here, use special reporters etc.
   mocha: {
     // timeout: 100000
   },
 
+  // Configure your compilers
   compilers: {
     solc: {
-      version: "0.7.0",
-      settings: {
-        optimizer: {
-          enabled: false,
-          runs: 200,
-        },
-        evmVersion: "byzantium",
-      },
-    },
+      version: "0.7.0",    // Fetch exact version from solc-bin (default: truffle's version)
+      // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
+      // settings: {          // See the solidity docs for advice about optimization and evmVersion
+      //  optimizer: {
+      //    enabled: false,
+      //    runs: 200
+      //  },
+      //  evmVersion: "byzantium"
+      // }
+    }
   },
+
 };
