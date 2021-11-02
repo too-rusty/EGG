@@ -1,30 +1,38 @@
 
 const IERC20 = artifacts.require("IERC20")
 const EggToken = artifacts.require("EggToken");
+
+const Burning = artifacts.require("Burning");
+const Staking = artifacts.require("Staking");
+const Voting = artifacts.require("Voting");
+const WithdrawableDistribution = artifacts.require("WithdrawableDistribution");
+
 const toWei = (amount) => web3.utils.toWei(amount, "ether")
 const fromWei = (amount) => web3.utils.fromWei(amount, "ether")
 
-const EGGTOKEN = "0x23d3A86d44b866a1d0c2179B62CF33551DBe9665"
-const STAKING = "0x0a16D9e8F9b92E0553E4f15548BFC38C36861a3E"
+const NEW_OWNER = "0x9cdd3da8aeb62804bea3545a0b1a390073348993";
 
 module.exports = async done => {
 
-//     const [admin,_] = await web3.eth.getAccounts()
-//     console.log(`admin addr: ${admin}`)
+    const EggTokenInstance = await EggToken.at("0xBc7D59A073517527979a157A3b40c5dCeD580fD9")
+    const StakingInstance = await Staking.at("0x6Ff521Ab728a5a6459B27Bc457e325875C5f6E28")
+    const VotingInstance = await Voting.at("0xD1213e8832dc462115824598BA5b8c5Fe014970F")
+    const WithdrawableDistributionInstance = await WithdrawableDistribution.at("0xCD9338aDa8d03b2CD0b8bCEfbAA38bdD44A2453f")
 
-//     const ierc20 = await IERC20.at(EGGTOKEN)
-//     await ierc20.approve(STAKING, ("1000000000000000000000000")) // allowing max
-//     const allow = fromWei(await ierc20.allowance("0x405b3cA1047C933F8d0714009Bfa43B5F1DA6376", STAKING))
-//     console.log("allowance", allow)
-//     // await ierc20.transfer("0x0221A018A6743474268a9a03e8fB17D811AF684D",53457916)    
-// console.log(`balance of owner: ${(await ierc20.balanceOf(admin))}`)
 
-// 0x0221A018A6743474268a9a03e8fB17D811AF684D the other address
+    let contracts_deriving_ownable = [WithdrawableDistributionInstance, VotingInstance, StakingInstance]
+    await Promise.all(
+        contracts_deriving_ownable.map( async instance => await instance.transferOwnership(NEW_OWNER) )
+    )
 
-    const egg = await EggToken.at("0xCD9338aDa8d03b2CD0b8bCEfbAA38bdD44A2453f")
-    console.log(`owner before: ${await egg.owner()}`)
-    await egg.transferOwnership("0x9cdd3da8aeb62804bea3545a0b1a390073348993")
-    console.log(`owner after: ${await egg.owner()}`)
+    await Promise.all(
+        contracts_deriving_ownable.map(async (v) => {
+            console.log(`owner ${await v.owner()}`)
+            return {}
+        })
+    )
+
+    // use try catch for txns
 
     done()
 
@@ -36,8 +44,3 @@ module.exports = async done => {
 
 */
 
-
-// const Burning = artifacts.require("Burning");
-// const Staking = artifacts.require("Staking");
-// const Voting = artifacts.require("Voting");
-// const WithdrawableDistribution = artifacts.require("WithdrawableDistribution");

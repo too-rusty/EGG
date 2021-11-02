@@ -15,8 +15,11 @@ module.exports = {
   plugins: ["truffle-plugin-verify"],
   // npm install -D truffle-plugin-verify
   api_keys: {
-    etherscan: polygonApiKey,
+    // etherscan: polygonApiKey,
+    polygonscan: polygonApiKey,
+    ftmscan: ftmApiKey,
   },
+  // google truffle run verify node npm package ot understand
 
   networks: {
     development: {
@@ -52,7 +55,9 @@ module.exports = {
       network_id: 250, // as seen in error message
       confirmations: 3,
       timeoutBlocks: 200,
-      skipDryRun: true
+      skipDryRun: true,
+      // gas: 2000000,
+      // gasPrice: 50000000000,
     },
     // ** truffle run verify EggToken  --network ftm_mainnet  # command to verify on mainnet **
 
