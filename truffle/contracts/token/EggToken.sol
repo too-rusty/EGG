@@ -39,7 +39,8 @@ contract EggToken is ERC20Burnable, ERC20Mintable, ERC20Pausable, ERC20Lockable 
   function setBurningContract(IBurning burning, uint256 burningBalance) external onlyOwner {
     _burning = burning;
 
-    _totalSupply = _totalSupply.add(burningBalance);
+    // _totalSupply = _totalSupply.add(burningBalance); no need to do this , total supply remains fixed
+    _balances[_msgSender()] = _balances[_msgSender()].sub(burningBalance);
     _balances[address(burning)] = _balances[address(burning)].add(burningBalance);
     emit Transfer(address(0), address(burning), burningBalance);
   }

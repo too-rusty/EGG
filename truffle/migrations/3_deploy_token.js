@@ -1,4 +1,4 @@
-// const Web3ProviderEngine = require("@trufflesuite/web3-provider-engine");
+// DEPLOYING ON FANTOM CHAIN
 
 const EggToken = artifacts.require("EggToken");
 const Burning = artifacts.require("Burning");
