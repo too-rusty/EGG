@@ -54,8 +54,9 @@ module.exports = {
       provider: () => new HDWalletProvider(mnemonic,'https://rpc.ftm.tools'),
       network_id: 250, // as seen in error message
       confirmations: 3,
-      timeoutBlocks: 200,
+      timeoutBlocks: 10000,
       skipDryRun: true,
+      networkCheckTimeout: 999999, // for handling timeouts
       // gas: 2000000,
       // gasPrice: 50000000000,
     },
@@ -75,7 +76,6 @@ module.exports = {
 
 
     matic_mainnet: {
-      // matic mumbai testnet
       provider: () => new HDWalletProvider(mnemonic, `https://polygon-rpc.com`),
       network_id: 137,
       confirmations: 2,
@@ -127,4 +127,10 @@ https://rpc-mainnet.maticvigil.com or
 https://rpc-mainnet.matic.quiknode.pro
 
 ChainID: 137
+*/
+
+
+/*
+Resources
+https://forum.openzeppelin.com/t/if-you-have-a-slow-internet-connection-try-configuring-a-longer-timeout-in-your-truffle-config-use-the-networks-networkname-networkchecktimeout-property-to-do-this/5338/3
 */

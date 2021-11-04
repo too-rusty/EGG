@@ -23,52 +23,58 @@ const NEW_OWNER = "0x9cdd3da8aeb62804bea3545a0b1a390073348993";
 const fromWei = (x) => web3.utils.fromWei(x, "ether")
 
 module.exports = async (deployer, networks, accounts) => {
-  await deployer.deploy(EggToken, EGG_TOKEN_NAME, EGG_TOKEN_SYMBOL, EGG_TOTAL_SUPPLY);
-  const EggTokenInstance = await EggToken.deployed();
-  console.log("***** DEPLOYED ***** EggToken at address: ", EggTokenInstance.address);
+  // await deployer.deploy(EggToken, EGG_TOKEN_NAME, EGG_TOKEN_SYMBOL, EGG_TOTAL_SUPPLY);
+  // const EggTokenInstance = await EggToken.deployed();
+  // console.log("***** DEPLOYED ***** EggToken at address: ", EggTokenInstance.address);
 
-  await deployer.deploy(
-    Burning,
-    EggTokenInstance.address,
-    BURNING_BURN_LIMIT,
-    BURNING_SINGLE_BURN_AMOUNT
-  );
-  const BurningInstance = await Burning.deployed();
-  console.log("***** DEPLOYED ***** Burning at address: ", BurningInstance.address);
-  await EggTokenInstance.setBurningContract(BurningInstance.address, BURNING_BURN_LIMIT);
-  console.log(`burning contrac bal: ${fromWei(await EggTokenInstance.balanceOf(BurningInstance.address))} , 
-              owner bal ${fromWei(await EggTokenInstance.balanceOf(accounts[0]))}`)
+  // await deployer.deploy(
+  //   Burning,
+  //   EggTokenInstance.address,
+  //   BURNING_BURN_LIMIT,
+  //   BURNING_SINGLE_BURN_AMOUNT
+  // );
+  // const BurningInstance = await Burning.deployed();
+  // console.log("***** DEPLOYED ***** Burning at address: ", BurningInstance.address);
+  // await EggTokenInstance.setBurningContract(BurningInstance.address, BURNING_BURN_LIMIT);
+  // console.log(`burning contrac bal: ${fromWei(await EggTokenInstance.balanceOf(BurningInstance.address))} , 
+  //             owner bal ${fromWei(await EggTokenInstance.balanceOf(accounts[0]))}`)
 
-  await deployer.deploy(Staking, EggTokenInstance.address);
-  const StakingInstance = await Staking.deployed();
-  // Testnet Staking Yield: 9% for 180 days
-  await StakingInstance.setStakingOptions(
-    [7776000 * 2],
-    [900]
-  )
-  console.log("***** DEPLOYED ***** Staking at address: ", StakingInstance.address);
-  await EggTokenInstance.setStakingContract(StakingInstance.address);
+  // await deployer.deploy(Staking, EggTokenInstance.address);
+  // const StakingInstance = await Staking.deployed();
+  // // Testnet Staking Yield: 9% for 180 days
+  // await StakingInstance.setStakingOptions(
+  //   [7776000 * 2],
+  //   [900]
+  // )
+  // console.log("***** DEPLOYED ***** Staking at address: ", StakingInstance.address);
+  // await EggTokenInstance.setStakingContract(StakingInstance.address);
 
-  await deployer.deploy(Voting, EggTokenInstance.address);
-  const VotingInstance = await Voting.deployed();
-  console.log("***** DEPLOYED ***** Voting at address: ", VotingInstance.address);
+  // await deployer.deploy(Voting, EggTokenInstance.address);
+  // const VotingInstance = await Voting.deployed();
+  // console.log("***** DEPLOYED ***** Voting at address: ", VotingInstance.address);
+  
+  // ------------------------------------------------------------------------------------------------------
+
+  const EggTokenInstance = await EggToken.at("0x41D80503f4407c03D0d39E09f4c173B7AEa50981")
+  const VotingInstance = await Voting.at("0x75d3630B71e5c29e26e7E6A617A910fB3538773F")
+  const StakingInstance = await Staking.at("0x87C97f383Edc6E98A8D96d92f4B47663785cE4d8")
 
   await deployer.deploy(WithdrawableDistribution, EggTokenInstance.address);
   const WithdrawableDistributionInstance = await WithdrawableDistribution.deployed();
   // Testnet Distribution: 2000_000 EGG , first send the tokens to the distribution contract
-  await EggTokenInstance.transfer(WithdrawableDistributionInstance.address, web3.utils.toWei("2000000", "ether"))
-  await WithdrawableDistributionInstance.increaseLockedWithdrawalLimits(
-    [
-      "0x0d46186692b8f67c87e86Be23A1cb9bd0c490789",
-      "0x99fd205c1B7Ff02e51ce36fEA061045Fb9125E6E",
-      "0x47BA1aDF0e6188df9ad2628eD72e780ffb6e5fD4"
-    ],
-    [
-      "8160",
-      "10541",
-      "4953"
-    ].map( x => web3.utils.toWei(x, "ether") )
-  )
+  await EggTokenInstance.transfer(WithdrawableDistributionInstance.address, web3.utils.toWei("1000000", "ether"))
+  // await WithdrawableDistributionInstance.increaseLockedWithdrawalLimits(
+  //   [
+  //     "0x0d46186692b8f67c87e86Be23A1cb9bd0c490789",
+  //     "0x99fd205c1B7Ff02e51ce36fEA061045Fb9125E6E",
+  //     "0x47BA1aDF0e6188df9ad2628eD72e780ffb6e5fD4"
+  //   ],
+  //   [
+  //     "8160",
+  //     "10541",
+  //     "4953"
+  //   ].map( x => web3.utils.toWei(x, "ether") )
+  // )
   console.log(
     "***** DEPLOYED ***** WithdrawableDistribution at address: ",
     WithdrawableDistributionInstance.address
@@ -83,6 +89,11 @@ module.exports = async (deployer, networks, accounts) => {
   
   console.log(`bal of new Owner: ${fromWei(await EggTokenInstance.balanceOf(NEW_OWNER))}`)
   // transfer the remaining balance of owner to the new owner
+  await Promise.all(
+    contracts_deriving_ownable.map( async instance => {
+      console.log(instance.address)
+    } )
+  )
 };
 
 
