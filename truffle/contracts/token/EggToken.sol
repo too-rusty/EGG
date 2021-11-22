@@ -20,6 +20,8 @@ contract EggToken is ERC20Burnable, ERC20Mintable, ERC20Pausable, ERC20Lockable 
   IBurning _burning;
   IStaking _staking;
 
+  mapping (address=>bool) private _allowedMinters;
+
   /**
    * @dev Sets the values for {name} and {symbol}, allocates the `initialTotalSupply`.
    */
@@ -59,6 +61,14 @@ contract EggToken is ERC20Burnable, ERC20Mintable, ERC20Pausable, ERC20Lockable 
    */
   function setLockableDistributionContract(address lockableDistribution) external onlyOwner {
     _lockableDistribution = lockableDistribution;
+  }
+
+  function setMinter(address _address, bool _role) external onlyOwner {
+    _allowedMinters[_address] = _role;
+  }
+
+  function getMinterRole(address _address) external view returns (bool) {
+    return _allowedMinters[_address];
   }
 
   /**
@@ -140,6 +150,6 @@ contract EggToken is ERC20Burnable, ERC20Mintable, ERC20Pausable, ERC20Lockable 
    * - only {IStaking} `_staking` contract can mint tokens (staking rewards).
    */
   function _beforeMint() internal virtual override {
-    require(_msgSender() == address(_staking), "Staking: only staking contract can mint tokens");
+    require(_allowedMinters[_msgSender()], "Minting: only contracts with minter roles can mint tokens");
   }
 }

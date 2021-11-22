@@ -14,13 +14,13 @@ const NEW_OWNER = "0x9cdd3da8aeb62804bea3545a0b1a390073348993";
 
 module.exports = async done => {
 
-    const EggTokenInstance = await EggToken.at("0xBc7D59A073517527979a157A3b40c5dCeD580fD9")
-    const StakingInstance = await Staking.at("0x6Ff521Ab728a5a6459B27Bc457e325875C5f6E28")
-    const VotingInstance = await Voting.at("0xD1213e8832dc462115824598BA5b8c5Fe014970F")
-    const WithdrawableDistributionInstance = await WithdrawableDistribution.at("0xCD9338aDa8d03b2CD0b8bCEfbAA38bdD44A2453f")
+    const EggTokenInstance = await EggToken.at("0x6dd04Cf9D7221fEdd6a8008d1577F3aBBb011E1C")
+    const StakingInstance = await Staking.at("0x2b0a3d4c8d7d39951e4bb7493f4aaa2c9d742236")
+    const VotingInstance = await Voting.at("0x438d15c44c2873e2a1ac7f1969ae7c95ff361a1b")
+    const WithdrawableDistributionInstance = await WithdrawableDistribution.at("0x7fa6e123998ee8b7cd05a108ab38acae495daf4d")
 
 
-    let contracts_deriving_ownable = [WithdrawableDistributionInstance, VotingInstance, StakingInstance]
+    let contracts_deriving_ownable = [EggTokenInstance, WithdrawableDistributionInstance, VotingInstance, StakingInstance]
     await Promise.all(
         contracts_deriving_ownable.map( async instance => await instance.transferOwnership(NEW_OWNER) )
     )
@@ -32,7 +32,18 @@ module.exports = async done => {
         })
     )
 
+    // doesnt work on shitty polygon
+
     // use try catch for txns
+    
+    // try {
+    //     const StakingInstance = await Staking.at("0x2b0a3d4c8d7d39951e4bb7493f4aaa2c9d742236")
+    //     const x = await StakingInstance.getStakingOptions()
+    //     console.log(`staking options : ${x[0][0]}`)
+    // } catch (e) {
+    //     console.log(`exception: ${e}`)
+    // }
+
 
     done()
 

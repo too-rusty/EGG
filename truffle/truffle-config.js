@@ -6,6 +6,7 @@ const mnemonic = process.env.MNEMONIC
 const url = process.env.MUMBAI_RPC_URL
 const ftmApiKey = process.env.FTM_API_KEY
 const polygonApiKey = process.env.POLYGON_API_KEY
+const bscApiKey = process.env.BSC_API_KEY
 // https://rinkeby.infura.io/v3/<PROJECT-ID> // for interacting with rinkeby chain
 
 module.exports = {
@@ -18,19 +19,27 @@ module.exports = {
     // etherscan: polygonApiKey,
     polygonscan: polygonApiKey,
     ftmscan: ftmApiKey,
+    bscscan: bscApiKey,
   },
   // google truffle run verify node npm package ot understand
 
   networks: {
     development: {
-    provider: () => new HDWalletProvider(mnemonic, 'http://127.0.0.1:8545'),
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 8545,            // Standard Ethereum port (default: none)
-     network_id: "*",       // Any network (default: none)
+      provider: () => new HDWalletProvider(mnemonic, 'http://127.0.0.1:8545'),
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 8545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
     }, // start ganache-cli before this and set env MNEMONIC
     bsc_testnet: {
       provider: () => new HDWalletProvider(mnemonic,'https://data-seed-prebsc-1-s1.binance.org:8545'),
       network_id: 97,
+      // confirmations: 5,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
+    bsc_mainnet: {
+      provider: () => new HDWalletProvider(mnemonic,'https://bsc-dataseed.binance.org/'),
+      network_id: 56,
       // confirmations: 5,
       timeoutBlocks: 200,
       skipDryRun: true
@@ -89,7 +98,7 @@ module.exports = {
 
   // Set default mocha options here, use special reporters etc.
   mocha: {
-    // timeout: 100000
+    // timeout: 100000 
   },
 
   // Configure your compilers
